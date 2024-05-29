@@ -5,17 +5,52 @@
         <title>Home</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="css/style.css">
         <script src="/static/js/htmx.min.js"></script>
     </head>
     <body>
-        {{ template "count" . }}
+        {{ template "form" .Form }}
+        <hr />
+        {{ template "display" .Data }}
     </body>
+    <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+            document.body.addEventListener("htmx:beforeSwap", function(evt) {
+                if (evt.detail.xhr.status === 422) {
+                    evt.detail.shouldSwap = true;
+                    evt.detail.isError = false;
+                }
+            });
+        });
+    </script>
 </html>
 {{ end }}
 
-{{ block "count" . }}
-Count {{ .Count }}
-<button hx-target="body" hx-post="/count">Count</button>
+{{ block "form" . }}
+<form hx-swap="outerHTML" hx-post="/contacts">
+    name: <input 
+        {{ if .Values.name }} value="{{ .Values.name }}" {{ end }}
+    type="text" name="name" />
+
+    email: <input 
+        {{ if .Values.email }} value="{{ .Values.email }}" {{ end }}
+    type="text" name="email" />
+
+    {{ if .Errors.email }}
+    <div style="color: red;"> {{ .Errors.email }} </div>
+    {{ end }}
+
+    <button type="submit">Create Contact</button>
+</form>
+{{ end }}
+
+{{ block "display" . }}
+<div id="contacts" style="display: flex; flex-direction: column">
+    {{ range .Contacts }}
+    <div>
+        <span>{{ .Name }}</span>
+        <span>{{ .Email }}</span>
+    </div>
+    {{ end }}
+</div>
 {{ end }}
 
