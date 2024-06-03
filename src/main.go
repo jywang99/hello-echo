@@ -12,15 +12,8 @@ func main() {
     e.Renderer = newTemplate()
     e.Static("/static", "static")
 
-    // e.GET("/login", )
-    e.GET("/", func(c echo.Context) error {
-        return c.Render(200, "index", page)
-    })
-    e.GET("/test", func(c echo.Context) error {
-        return c.Render(200, "test", page)
-    })
-    e.POST("/contacts", getContacts)
-    e.DELETE("/contacts/:id", deleteContact)
+    SetupViews(e)
+    SetupAuth(e)
 
     e.Logger.Fatal(e.Start(":42069"))
 }

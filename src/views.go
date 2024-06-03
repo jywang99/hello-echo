@@ -74,3 +74,14 @@ func deleteContact(c echo.Context) error {
     return c.NoContent(200)
 }
 
+func SetupViews(e *echo.Echo) {
+    e.GET("/", func(c echo.Context) error {
+        return c.Render(200, "index", page)
+    })
+    e.GET("/test", func(c echo.Context) error {
+        return c.Render(200, "test", page)
+    })
+    e.POST("/contacts", getContacts)
+    e.DELETE("/contacts/:id", deleteContact)
+}
+
